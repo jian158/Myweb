@@ -1,0 +1,125 @@
+﻿<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+<meta charset="gbk"/>
+    <title>贫困村查询页</title>
+    <link rel="stylesheet" href="CSS/style_pkrk.css"/>
+    <script type="text/javascript" src="JS/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="JS/echarts.min.js"></script>
+    <script type="text/javascript" src="JS/table.js"></script>
+</head>
+<body>
+<div id="p_info">
+<div id="win_pinfo" class="p_win" style="margin-top:100px">
+        <div id="p_title"  onclick="$('#p_info').hide(500)">
+            <b></b>
+            <span><label>关闭</label></span>
+        </div>
+        <label id="info_pc"></label>
+        <div id="div_cinfo" style="height: 220px;width: 600px;margin-left:10%"></div>
+    </div>
+</div>
+
+<div class="navigation">
+    <div class="navleft">贫困人口档案</div>
+    <div style="float: right">
+        <ul class="ul-default">
+            <li><a href="index.html" >主页</a></li>
+            <li><a href="pkrk.html">查询首页</a></li>
+            <li><b>贫困村</b></li>
+            <li><a href="pkrk-pkh.html">贫困户</a></li>
+            <li><a href="pkrk-pkr.html">贫困人口</a></li>
+        </ul>
+    </div>
+    
+</div>
+
+<div class="content" align="center" style="margin-top: 50px">
+<table id="mytable">
+    </table>
+    <label id="tblabel" style="color: #8b0000">没有检索到数据</label>
+</div>
+
+
+<div class="footnav" align="center">
+    <div>
+        <div class="selectdiv" style="margin-left: 10px">
+            <label>镇</label>
+            <select id="select_pz" >
+                <option>不限</option>
+            </select>
+        </div>
+    </div>
+
+    <label id="btn0"></label>
+    <input id="pageSize" type="text" size="1" maxlength="2"  />行 <a href="#" id="pageSizeSet">设置</a>
+    <a href="#" id="btn1">首页</a>
+    <a href="#" id="btn2">上一页</a>
+    <a href="#" id="btn3">下一页</a>
+    <a href="#" id="btn4">尾页</a>
+    <label>转到 </label>
+    <input id="changePage" type="text" size="1" maxlength="4" />
+    <label>页 </label>
+    <a href="#" id="btn5">跳转</a>
+    <label id="num" style="float: right;margin-right: 20px">0</label>
+    <label style="float: right" >贫困村数：</label>
+</div>
+
+<script type="text/javascript">
+    var left = ($(window).width() - $("#win_pinfo").width()) / 2;
+    $("#win_pinfo").css({ marginLeft: left });
+    initable("mytable");
+    initdata();
+    function initdata() {
+        $.post("GetData.ashx", { 'method': "gett" }, function (data) {
+            //alert(data);
+            var arr = eval(data);
+            for (var i = 0; i < arr.length; i++) {
+                $("#select_pz").append("<option>" + arr[i].PkzName + "</option>");
+            }
+            var str = $("#select_pz option:selected").val();
+            Filldata(str);
+        });
+        
+    }
+
+    $("#select_pz").change(function () {
+        $("#mytable").empty();
+        retable();
+        Filldata(this.value);
+    });
+
+    function Filldata(zname) {
+        var arr = new Array();
+        arr[0] = zname;
+        $.post("GetData.ashx", { 'method': "getc", 'cons': JSON.stringify(arr) }, function (data) {
+            var arr = eval(data);
+            for (var i = 0; i < arr.length; i++) {
+                addcell(arr[i].PkcName,arr[i], getCountyInfo);
+            }
+            resetPage();
+            $("#num").text(arr.length);
+            if(arr.length==0)
+                $("#tblabel").show();
+            else  $("#tblabel").hide();
+        });
+    }
+
+
+    function getCountyInfo(data) {
+        var info=data.PkcYear+"成立村委会,村级产业为"+data.PkcIndustry+",村委会成员有"+data.PkcMember;
+        $("#info_pc").text(info);
+        var arr=new Array();
+        arr.push(data.PhotovoltaicIncome);
+        arr.push(data.CultureIncome);
+        arr.push(data.BasicIncome);
+        arr.push(data.subsidyIncome);
+        draw(arr);
+        $("#p_info").show(200);
+    }
+
+</script>
+<script type="text/javascript" src="JS/page.js" charset="gbk"></script>
+    <script type="text/javascript" src="JS/cchart.js"></script>
+
+</body>
+</html>

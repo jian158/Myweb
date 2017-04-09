@@ -1,0 +1,348 @@
+﻿
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gbk"/>
+    <script type="text/javascript" src="JS/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="JS/dataTables.select.js"></script>
+    <script type="text/javascript" src="JS/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="JS/bootstrap.js"></script>
+    <script type="text/javascript" src="JS/dataTables.bootstrap.js"></script>
+    <link rel="stylesheet" href="CSS/jquery.dataTables.css" />
+    <link rel="stylesheet" href="CSS/dataTables.bootstrap.css">
+    <link rel="stylesheet" href="CSS/select.dataTables.css" />
+    <link rel="stylesheet" href="CSS/style_pkrk.css" />
+    <link rel="stylesheet" href="CSS/style_admin.css">
+    <link rel="stylesheet" href="CSS/bootstrap.css">
+    <title>贫困村管理</title>
+</head>
+<body >
+
+<nav class = "navbar-fixed-top" style="background-color:#f9f9f9;font-size: 20px;">
+    <ul class="nav navbar-nav navbar-right" style="margin-right: 20px">
+        <li><a href="index.html" class="active">主页</a></li>
+        <li><a><label>贫困村</label></a></li>
+        <li><a href="pkrc-pkrAdmin.html" >贫困人</a></li>
+    </ul>
+</nav>
+
+<div class="panel panel-default" style="margin-top: 50px">
+
+        <div class="panel-body">
+            <table id="example" class="table  table-striped"   width="100%">
+                <thead style="background-color: #33ffff">
+                <tr>
+                    <th>贫困村ID</th>
+                    <th>村名</th>
+                    <th>所属镇ID</th>
+                    <th>成立年份</th>
+                    <th>村级产业</th>
+                    <th>村委会成员</th>
+                    <th>总户数</th>
+                    <th>总人数</th>
+                    <th>光伏发电收入</th>
+                    <th>经济养殖收入</th>
+                    <th>基本收入</th>
+                    <th>其他收入</th>
+                </tr>
+                </thead>
+                <tfoot class="panel-footer">
+
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+<div id="e_Attributes">
+    <div class="p_win" style="margin-top: 8%">
+        <div id="p_title" >
+            <b id="title">添加贫困村</b>
+            <span onclick="$('#e_Attributes').hide(500)"><label>关闭</label></span>
+        </div>
+        <div>
+            <form name="form1" >
+                <table class="formlayout">
+                    <tbody>
+                    <tr>
+                        <td><label>贫困村ID*</label><input id="PkcID" type="number" name="PkcID" disabled="disabled" placeholder="只能输入数字"/></td>
+                        <td><label>村名*</label> <input type="text" name="PkcName" maxlength="16"/></td>
+                    </tr>
+                    <tr>
+                        <td><label>所属镇ID:</label>
+                        <select id="PkzID">
+
+                        </select>
+                        </td>
+                        <td><label>成立年份：</label><input type="number" name="PkcYear"placeholder="只能输入数字" maxlength="4"/></td>
+                    </tr>
+                    <tr>
+                        <td><label>村级产业：</label><input type="text" name="PkcIndustry" maxlength="32"/></td>
+                        <td><label>村委会成员：</label><input type="text" name="PkcMember" maxlength="32"/></td>
+                    </tr>
+                    <tr>
+                        <td><label>总户数：</label><input type="number" name="TotalNumberH" placeholder="只能输入数字"/></td>
+                        <td><label>总人数：</label><input type="number" name="TotalNumberR" placeholder="只能输入数字"/></td>
+                    </tr>
+                    <tr>
+                        <td><label>光伏发电收入：</label><input type="number" name="PhotovoltaicIncome" placeholder="只能输入数字"/></td>
+                        <td><label>经济养殖收入：</label><input type="number" name="CultureIncome" placeholder="只能输入数字"/></td>
+                    </tr>
+                    <tr>
+                        <td><label>基本收入：</label><input type="number" name="BasicIncome" placeholder="只能输入数字"/></td>
+                        <td><label>其他收入：</label> <input type="number" name="subsidyIncome" placeholder="只能输入数字"/></td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </form>
+            <div>
+                <button class="sub" id="sub">提交</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="adfootnav">
+    <div style="text-align: center">
+        <button id="add">添加</button>
+        <button id="edit">修改</button>
+        <button id="delete">删除</button>
+        <button id="adds">导入<input accept=".xlsx,.csv" type="file" id="addfile" name="Upload" style="display: none"></button>
+        <button id="exit">退出</button>
+    </div>
+</div>
+
+<script type="text/javascript" src="JS/ajaxfileupload.js"></script>
+<script type="text/javascript">
+    var left = ($(window).width() - $(".p_win").width()) / 2;
+    $(".p_win").css({ marginLeft: left });
+    var table;
+    var mode;
+    $(document).ready(function () {
+        $.post("Update.ashx", { 'method': 'cklogin' }, function(data) {
+            if (data=="true") {
+                Initdata();
+            } else {
+                alert("未登录");
+                window.location.href = "pkrk-login.html";
+            }
+        });
+        $.post("GetData.ashx", { 'method': "gett" }, function (data) {
+            var arr = eval(data);
+            for (var i = 0; i < arr.length; i++) {
+                $("#PkzID").append("<option>" + arr[i].PkzID + "</option>");
+            }
+        });
+        function Initdata() {
+
+                table = $("#example").DataTable({
+                    ajax: {
+                        url:"GetData2.ashx",
+                        type:"POST",
+                        data:{ 'method': "pkc" },
+                        dataSrc:function (json) {
+                            return eval(json);
+                        }
+                        },
+                    processing: true,
+                    bDeferRender:true,
+                    sPaginationType: "simple_numbers",
+                    "columns": [
+                        { data: "PkcID" },
+                        { data: "PkcName" },
+                        { data: "PkzID" },
+                        { data: "PkcYear" },
+                        { data: "PkcIndustry" },
+                        { data: "PkcMember" },
+                        { data: "TotalNumberH" },
+                        { data: "TotalNumberR" },
+                        { data: "PhotovoltaicIncome" },
+                        { data: "CultureIncome" },
+                        { data: "BasicIncome" },
+                        { data: "subsidyIncome" }
+                    ],
+                    "ordering": false,
+                    "oLanguage": {
+                        "sProcessing": " 努力加载数据中.",
+                        "sLengthMenu": "每页显示 _MENU_ 条记录",
+                        "sZeroRecords": "抱歉， 没有找到",
+                        "sInfo": "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",
+                        "sInfoEmpty": "没有数据",
+                        "sInfoFiltered": "(从 _MAX_ 条数据中检索)",
+                        "sZeroRecords": "没有检索到数据",
+                        "sSearch": "模糊查询:  ",
+                        "oPaginate": {
+                            "sFirst": "首页",
+                            "sPrevious": "前一页",
+                            "sNext": "后一页",
+                            "sLast": "尾页"
+                        }
+                    },
+                });
+                InitListen();
+        }
+    });
+
+    function InitListen() {
+        $('#example').on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+
+        $("#edit").click(function () {
+            $('#PkzID').attr('disabled',true);
+            $('#PkcID').attr('disabled',true);
+            $("#title").text("修改信息");
+            mode = "mdpc";
+            if (table.rows('.selected').data().length > 1) {
+                alert("只能修改一行！");
+            } else if (table.rows('.selected').data().length == 0) {
+                alert("未选中！");
+            } else {
+                var arr = table.rows('.selected').data()[0];
+                $("#PkzID").val(arr["PkzID"]);
+                $.each(arr, function(name, value) {
+                    $('input[name='+name+']').val(value);
+                });
+                $("#e_Attributes").toggle(500);
+            }
+        });
+
+        $("#add").click(function () {
+            $("#title").text("添加信息");
+            $('#PkzID').attr('disabled',false);
+            $('#PkcID').attr('disabled',false);
+            mode = "addpc";
+            $("#e_Attributes").toggle(500);
+        });
+
+        $("#sub").click(function () {
+            var arr = {};
+            var form = document.forms[0];
+                //遍历指定form表单所有元素  
+                var ip = form.getElementsByTagName("input");
+                for (var i = 0; i < ip.length; i++) {
+                    if (i<3&&ip[i].value=="")
+                    {
+                        ip[i].focus();
+                        ip[i].placeholder="不能为空";
+                        return;
+                    }
+                    arr[ip[i].name] = ip[i].value;
+                }
+                arr["PkzID"]=$("#PkzID option:selected").val();
+            $("#e_Attributes").toggle(200);
+
+            $.post("Update.ashx", { 'method': mode, 'data': JSON.stringify(arr) }, function (data) {
+                if (data == "true") {
+                    if (mode == "mdpc") {
+                        table.row(".selected").data(arr).draw();
+                    } else {
+                        table.row.add(arr).draw();
+                    }
+
+                } else if (data=="false") {
+                    alert("更新失败:");
+                }
+                else if (data=="exit") {
+                    alert("此ID已存在");
+                }
+                else {
+                    alert("连接服务器失败:");
+                }
+            });
+
+        });
+
+        $("#delete").click(function () {
+            var l = table.rows('.selected').data().length;
+            if(l<1)
+            {
+                alert("未选中！");
+                return;
+            }
+            var arr = new Array();
+            for (var i = 0; i < l; i++) {
+                var sr = table.rows('.selected').data()[i];
+                arr.push(sr.PkcID) ;
+            }
+            $.post("Update.ashx", { 'method': "delpc", 'data': JSON.stringify(arr) }, function (data,status) {
+                if (data=="true"&&status=="success") {
+                    table.rows('.selected').remove().draw(false);
+                } else {
+                    alert("删除失败");
+                }
+            });
+        });
+
+        $("#exit").click(function() {
+            $.post("Update.ashx", { 'method': "exit" }, function (data, status) {
+                if (data == "true" && status == "success") {
+                    window.location.href = "pkrk-login.html";
+                } else {
+                    alert("连接服务器失败");
+                }
+            });
+        });
+
+        var ipfile=document.getElementById("addfile");
+        $("#adds").click(function () {
+            ipfile.value="";
+            ipfile.click();
+        });
+
+        function getFileName(o){
+            var pos=o.lastIndexOf("\\");
+            return o.substring(pos+1);
+        }
+        $("#addfile").change(function () {
+            if (this.value=="") {
+                return;
+            }
+            if (confirm("是否导入"+getFileName(this.value))==true)
+            {
+                $.ajaxFileUpload({
+                    url: 'UpLoad.ashx',
+                    secureuri: false,
+                    fileElementId: 'addfile',
+                    dataType: 'json',
+                    data:{'import':'pkc'},
+                    success: function (data, status) {
+                        if (data.status=="true")
+                        {
+                            table.ajax.reload();
+                            alert(data.msg);
+                        }
+                        else
+                        {
+                            alert(data.msg);
+                        }
+                    },
+                    error: function (data, status, e) {
+                        alert("文件导入失败："+e);
+                    }
+                });
+            }
+        });
+    }
+
+    function putvalue(data) {
+        for (var f = 0; f < document.forms.length; f++) {
+            var form = document.forms[f];
+            if (form.name == "form1") {
+                //遍历指定form表单所有元素  
+                var ip = form.getElementsByTagName("input");
+                for (var i = 0; i < ip.length; i++) {
+                    ip[i].value = data[i];
+                }
+                break;
+            }
+        }
+    }
+
+
+</script>
+
+<script type="text/javascript" src="JS/dataTables.select.js"></script>
+</body>
+</html>

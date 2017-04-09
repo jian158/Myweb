@@ -1,0 +1,135 @@
+﻿<html>
+<head>
+<meta http-equiv="Content-Type" charset="gbk"/>
+    <title>查询首页</title>
+    <meta charset="gbk"/>
+    <link rel="stylesheet" href="CSS/style_pkrk.css" />
+    <script type="text/javascript" src="JS/jquery-3.1.1.min.js"></script>
+    <style>
+        .main {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: url('Image/nanbg.jpg') center top;
+            background-size: cover;
+        }
+
+        .content {
+            width: 800px;
+            height: 400px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            overflow: hidden;
+            margin-top: -200px;
+            margin-left: -400px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            padding: 50px;
+            box-sizing: border-box;
+            /*不会把盒子撑开*/
+        }
+
+        .content::before {
+            content: "";
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+            z-index: -1;
+            /*-1 可以当背景*/
+            filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=5, MakeShadow=true);
+            -webkit-filter: blur(5px);
+            -moz-filter: blur(5px);
+            -ms-filter: blur(5px);
+            filter: blur(5px);
+            margin: -30px;  /*消除边缘透明*/
+            opacity: 1;
+            background: url('Image/nanbg.jpg') center top;
+            background-size: cover;
+            /*平铺*/
+            background-attachment: fixed;
+            /*位置固定*/
+        }
+
+        .content h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .content label {
+            line-height: 1.7;
+            font-size: 40px;
+            font-weight: bolder;
+            color: red;
+            /*1.7倍行间距*/
+        }
+        .blur {
+            -webkit-filter: blur(5px); /* Chrome, Opera */
+            -moz-filter: blur(5px);
+            -ms-filter: blur(5px);
+            filter: blur(5px);
+            filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=30, MakeShadow=false); /* IE6~IE9 */
+            filter:alpha(opacity=80);
+            opacity:0.8;
+            /*height:400px;*/
+            position:absolute;
+            /*left:-50px;*/
+            /*top:-50px;*/
+        }
+    </style>
+</head>
+<body style="background-image: url('Image/nanbg.jpg');background-size: cover">
+<div class="navigation">
+    <div class="navleft">
+        <label>贫困人口档案</label>
+    </div>
+    <div style="float: right">
+        <ul>
+            <li><a href="index.html">主页</a></li>
+            <li><b>查询首页</b></li>
+            <li><a href="pkrk-pkc.html">贫困村</a></li>
+            <li><a href="pkrk-pkh.html">贫困户</a></li>
+            <li><a href="pkrk-pkr.html">贫困人口</a></li>
+        </ul>
+    </div>
+</div>
+<div class="content" style="z-index: 100;">
+    <div align="center">
+        <label>南漳县现有贫困镇</label>
+        <label id="pznum">0</label>
+        <label>个，</label>
+        <label>贫困村</label>
+        <label id="pcnum">0</label>
+        <label>个，</label>
+        <p></p>
+        <label>贫困户</label>
+        <label id="phnum">0</label>
+        <label>户，</label>
+        <label>其中贫困人口</label>
+        <label id="prnum">0</label>
+        <label>个，</label>
+        <p></p>
+    </div>
+
+</div>
+<script type="text/javascript">
+    $.post("GetData.ashx", { 'method': "getcount" }, function(data) {
+        var arr;
+        try
+        {
+            arr = eval(data);
+        }catch (e)
+        {
+            alert("连接服务器失败！\n错误信息："+e);
+        }
+        $("#pznum").text(arr[0]);
+        $("#pcnum").text(arr[1]);
+        $("#phnum").text(arr[2]);
+        $("#prnum").text(arr[3]);
+    });
+</script>
+</body>
+</html>

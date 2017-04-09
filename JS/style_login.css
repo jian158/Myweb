@@ -1,0 +1,49 @@
+
+body{
+    background-image: url("image/banner.jpg");
+    padding-top: 5%;
+    border-spacing: 0;
+    }
+.logindiv {
+    background-color: whitesmoke;
+    width: 480px;
+    height: 320px;
+    border: #66cc33;
+    border-radius: 25px 25px 0px 0px;
+    display: block;
+}
+.logindiv #logbtn {
+    width: 20%;
+    margin-top: 30px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+}
+.logindiv #logbtn:hover {
+    background-color: red;
+    cursor: pointer;
+}
+.logindiv h1 {
+    border-radius: 3px;
+    color: #f08080;
+}
+.logindiv input {
+    width: 80%;
+    display: block;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius:25px;
+   -webkit-border-radius: 25px;
+   -moz-border-radius: 25px;
+   -o-border-radius: 25px;
+   margin: 0px 0px 12px 0px;
+}
+#loginbottom {
+    width: 480px;
+    background-color: #E15748;
+     border-radius: 0px 0px 20px 20px;
+}
+#modify:hover {
+    background-color: #40e0d0;
+    cursor: pointer;
+}

@@ -1,0 +1,196 @@
+﻿<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>贫困人查询</title>
+    <link rel="stylesheet" href="CSS/style_pkrk.css">
+    <script rel="script" src="JS/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="JS/table.js" charset="gbk"></script>
+</head>
+<body>
+    <div id="p_info">
+    <div id="win_pinfo" class="p_win" style="margin-top:100px">
+        <div id="p_title" onclick="$('#p_info').hide(500)">
+            <b>详细信息</b>
+            <span><label >关闭</label></span>
+        </div>
+        <div align="center" style="margin-top: 20px">
+            <table id="table_pinfo" border="1" cellspacing="0" cellpadding="0">
+                <tr>
+                    <th width="50">性别</th>
+                    <th width="50">年龄</th>
+                    <th width="50">学历</th>
+                    <th width="80">是否残疾</th>
+                    <th width="250">家庭地址</th>
+                    <th width="100">村总体收入的组成</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+ 
+<div class="navigation">
+    <div class="navleft">贫困人口档案</div>
+    <div style="float: right">
+        <ul>
+            <li><a href="index.html">主页</a></li>
+            <li><a href="pkrk.html">查询首页</a></li>
+            <li><a href="pkrk-pkc.html">贫困村</a></li>
+            <li><a href="pkrk-pkh.html">贫困户</a></li>
+            <li><b >贫困人口</b></li>
+        </ul>
+    </div>
+
+</div>
+<div class="content" align="center">
+    <div class="selectdiv" style="display: inline-block; width: 100%;margin-bottom: 10px">
+        <label>镇</label>
+        <select id="sz" title="镇" style="width: 80px;">
+            <option>不限</option>
+    </select>
+        <label>村</label>
+    <select id="sc" title="村" style="width: 80px;">
+        <option>不限</option>
+    </select>
+        <label>年限</label>
+    <select id="sy" title="年" style="width: 80px;">
+        <option>不限</option>
+    </select>
+        <label>类别</label>
+    <select id="sp" title="贫困人口类别" style="width: 80px;">
+        <option>不限</option>
+        <option>未脱贫人</option>
+        <option>已脱贫人</option>
+        <option>新增脱贫人</option>
+    </select>
+    </div>
+    <div class="tbborder">
+        <table id="mytable"  cellspacing="5">
+    </table>
+        <label id="tblabel" style="color: #8b0000">没有检索到数据</label>
+    </div>
+    
+
+    <div class="footnav">
+        <label id="btn0"></label>
+        <input id="pageSize" type="text" size="1" maxlength="2"/>行<a href="#" id="pageSizeSet">设置</a>
+        <a href="#" id="btn1">首页</a>
+        <a href="#" id="btn2">上一页</a>
+        <a href="#" id="btn3">下一页</a>
+        <a href="#" id="btn4">尾页</a>
+        <label>转到 </label>
+        <input id="changePage" type="text" size="1" maxlength="4"/>
+        <label>页 </label>
+        <a href="#" id="btn5">跳转</a>
+        <label id="prnum" style="float: right;margin-right: 20px">0</label>
+        <label style="float: right" >贫困人口数：</label>
+        
+    </div>
+</div>
+    
+<script>
+    var left = ($(window).width() - $("#win_pinfo").width()) / 2;
+    $("#win_pinfo").css({ marginLeft: left });  //设置弹出层区中
+    initable("mytable");
+    initdata();
+
+    function getPersonInfo(data) {
+        if ($("#table_pinfo  tr").length < 2) {
+            var txt = "<tr><td></td> <td></td><td></td><td></td> <td></td><td></td></tr>";
+            $("#table_pinfo").append(txt);
+        }
+        var arr=new Array();
+        arr.push(data.Gender);
+        arr.push(data.Age);
+        arr.push(data.Education);
+        arr.push(data.IsDisabled);
+        arr.push(data.Home);
+        $.post("GetData2.ashx",{'method':'getc','cid':data.PkcID},function (d) {
+            var s=JSON.parse(d);
+            var info="光伏发电收入"+s.PhotovoltaicIncome+"元，经济养殖收入"+s.CultureIncome+"元,基本收入"+s.BasicIncome+"元,其他收入"+s.subsidyIncome;
+            arr.push(info);
+            for (var i = 0; i < 6; i++) {
+                $("#table_pinfo tr").eq(1).find("td").eq(i).html(arr[i]);
+            }
+            $("#p_info").show(500);
+        });
+
+    }
+
+    function initdata() {
+        $.post("GetData.ashx", { method: "gett" }, function (data) {
+            var arr = eval(data);
+            for (var i = 0; i < arr.length; i++) {
+                $("#sz").append("<option>" + arr[i].PkzName + "</option>");
+            }
+            postdata();
+        });
+    }
+
+    function postdata() {
+        $.post("GetData.ashx", { method: "getc", 'cons': JSON.stringify(getcons())}, function (data) {
+            //alert(data);
+            var arr = eval(data);
+            for (var i = 0; i < arr.length; i++) {
+                $("#sc").append("<option>" + arr[i].PkcName + "</option>");
+            }
+                getdata("getp");
+        });
+        
+    }
+
+    $("#sz").change(function () {
+        $("#mytable").empty();
+        $("#sc option:not(:first)").remove();
+        retable();
+        postdata(this.value);
+    });
+
+    $("#sc").change(function() {
+        $("#mytable").empty();
+        $("#sy option:not(:first)").remove();
+        $.post("GetData.ashx", { method: "gety" }, function (data) {
+            var arr = eval(data);
+            for (var i = 0; i < arr.length; i++) {
+                $("#sy").append("<option>" + arr[i] + "</option>");
+            }
+            retable();
+            getdata("getp");
+        });
+    });
+
+    $("#sy").change(function () {
+        $("#mytable").empty();
+        retable();
+        getdata("getp");
+    });
+    $("#sp").change(function () {
+        $("#mytable").empty(); 
+        retable();
+        getdata("getp");
+    });
+
+    function getdata(method) {
+        $.post("GetData.ashx", { 'method': method, 'cons': JSON.stringify(getcons()) }, function (data) { 
+            var arr = eval(data);
+                for (var i = 0; i < arr.length; i++) {
+                    addcell(arr[i].PkrName,arr[i],getPersonInfo);
+                }
+                $("#prnum").text(arr.length);
+                if (arr.length == 0)
+                    $("#tblabel").show();
+                else $("#tblabel").hide();
+            });
+    }
+
+    function getcons() {
+        var arr = new Array();
+        arr[0] = $("#sz option:selected").val();
+        arr[1] = $("#sc option:selected").val();
+        arr[2] = $("#sy option:selected").val();
+        arr[3] = $("#sp option:selected").val();
+        return arr;
+    }
+</script>
+    <script type="text/javascript" src="JS/page.js" charset="gbk"></script>
+</body>
+</html>

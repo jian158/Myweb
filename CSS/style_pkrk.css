@@ -1,0 +1,250 @@
+a {
+    text-decoration: none;
+}
+a:hover{background-color: yellow}
+.navigation
+{
+    position:fixed;
+    border: 1px double;
+    background-color:cadetblue;
+    top: 0px;
+    left: 0px;
+    height: 30px;
+    width: 100%;
+    z-index: 1000;
+}
+.content
+{
+    margin-top: 45px;
+}
+.tbborder
+{
+    border:#00fa9a;
+}
+.content table td{
+    border: 1px solid #a6e1ec;
+    vertical-align:middle;
+    font-size: 18px;
+}
+.content table td:hover{
+    cursor: pointer;
+    background-color: red;
+}
+.content table tr{
+    text-align: center;
+}
+
+.navleft
+{
+    margin-left: 20px;
+    float: left;
+    margin-top: 5px;
+}
+
+.navigation li
+{
+    line-height: 1px;
+    float: left;
+    list-style: none;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin:0; /* 将默认的外边距去掉 */
+}
+#p_info{
+    width:100%;height:100%;
+    position:fixed;
+    top:0px;
+    left:0px;
+    /*background:whitesmoke;*/
+    opacity: 0.9;
+    display:none;
+     z-index: 1001;
+    background-color:white;
+
+}
+#e_Attributes {
+    width:100%;height:100%;
+    position:absolute;
+    top:0px;
+    left:0px;
+    display:none;
+    z-index: 9999;
+}
+
+.p_win
+{
+    border-radius: 10px;
+    border: double;
+    margin-top: 2%;
+    background-color:whitesmoke;
+    width: 800px;
+    text-align: center;
+    z-index: 1000;
+}
+
+.p_win:after
+{
+    background-attachment: fixed;
+    -webkit-filter: blur(20px);
+    -moz-filter: blur(20px);
+    -ms-filter: blur(20px);
+    -o-filter: blur(20px);
+    filter: blur(20px);
+}
+.sub
+{
+    margin-top: 10px;
+    border: 1px solid #00fa9a;
+    width: 50px;
+    height: 50px;
+    border-radius: 25px;
+}
+.sub:hover
+{
+    background-color: #bddef4;
+}
+.p_win1
+{
+    border-radius: 10px;
+    border: double;
+    margin-top: 5%;
+    background-color: whitesmoke;
+    width: 800px;
+    text-align: center;
+
+}
+
+.formlayout
+{
+    border-collapse: separate;
+    border-spacing: 5px;
+}
+.formlayout table tr
+{
+    line-height: 100px;
+}
+.formlayout select
+{
+    width: 200px;
+    height: 28px;
+    font-size:18px;
+}
+.formlayout  input{width:200px; font-size:18px;
+
+    }
+.formlayout label {
+    display: inline-block;
+    width: 150px;
+}
+
+#p_title{
+    width:100%;
+    text-align:center;
+    line-height: 38px;
+    font-size:18px;
+    position:relative;
+}
+
+#p_title span
+{
+    position:absolute;
+    font-size:12px;
+    right:-10px;
+    top:-20px;
+    text-align: center;
+    background:#ffffff;
+    border:#00bbcc solid 1px;
+    width:38px;
+    height:40px;
+    border-radius:20px;
+}
+#p_title span:hover
+{
+    background-color: #8b0000;
+}
+#p_title span a
+{
+    display:block;
+}
+
+#table_pinfo td {
+    word-break: break-all;
+}
+.selectdiv {
+    float: left; margin-left: 50px;
+}
+.selectdiv label {
+    height: 25px; margin-left: 10px;float: left; border: 2px solid #00bfff;border-radius: 5px 0px 0px 5px;
+}
+.selectdiv select {
+    height: 29px; width: 80px;float: left; border-radius:0px 5px 5px 0px; border: 2px solid #00bfff;border-left: none
+}
+#example thead th{
+    font-size: 14px;
+    border: 1px solid #00bfff;
+    word-break: keep-all;
+}
+#example tr td{
+    font-size: 12px;
+    border: 1px solid #00bfff;
+}
+
+.footnav
+{
+    bottom: 0; left: 0; position: fixed; width: 100%; z-index: 1000;
+    border-top: 1px solid #8b0000;
+}
+
+.dialog
+{
+    border-radius: 10px;
+    border: double;
+    margin-top: 10%;
+    background-color:whitesmoke;
+    text-align: center;
+    z-index: 1000;
+    margin-left: 40%;
+}
+.win{
+    width:100%;height:100%;
+    position:fixed;
+    top:0px;
+    left:0px;
+    /*background:whitesmoke;*/
+    opacity: 0.9;
+    display:none;
+    z-index: 1001;
+    background-color:white;
+}
+
+.dialog_title{
+    width:100%;
+    text-align:center;
+    line-height: 38px;
+    font-size:18px;
+    position:relative;
+}
+
+.dialog_title span
+{
+    position:absolute;
+    font-size:12px;
+    right:-10px;
+    top:-20px;
+    text-align: center;
+    background:#ffffff;
+    border:#00bbcc solid 1px;
+    width:38px;
+    height:40px;
+    border-radius:20px;
+}
+.dialog_title span:hover
+{
+    background-color: #8b0000;
+}
+.dialog_title span a
+{
+    display:block;
+}
+
+

@@ -1,0 +1,154 @@
+﻿<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="gbk">
+    <title>贫困户查询</title>
+    <link rel="stylesheet" href="CSS/style_pkrk.css"/>
+    <script rel="script" src="JS/jquery-3.1.1.min.js"></script>
+    <script rel="script" src="JS/echarts.min.js"></script>
+    <script type="text/javascript" src="JS/table.js"></script>
+</head>
+<body>
+ <div id="p_info">
+        <div id="win_pinfo" class="p_win" style="margin-top:100px;">
+            <div id="p_title" onclick="$('#p_info').hide(500)">
+                <b>详细信息</b>
+                <span><label>关闭</label></span>
+            </div>
+            <label id="info_ph"></label>
+            <div id="div_cinfo" style="height: 220px;width: 600px;margin-left:10%"></div>
+        </div>
+ </div>
+
+ <div class="navigation">
+        <div class="navleft">贫困人口档案</div>
+        <div style="float: right">
+            <ul>
+                <li><a href="index.html">主页</a></li>
+                <li><a href="pkrk.html">查询首页</a></li>
+                <li><a href="pkrk-pkc.html">贫困村</a></li>
+                <li><b>贫困户</b></li>
+                <li><a href="pkrk-pkr.html">贫困人口</a></li>
+            </ul>
+        </div>
+</div>
+    
+    <div class="content" align="center">
+       
+         <div class="selectdiv" style="display: inline-block;width: 100%">
+        <label style="" >村</label>
+        <select id="select_pc" title="村">
+            <option>不限</option>
+            </select>
+        <label >年限</label>
+        <select id="select_py">
+            <option>不限</option>
+            </select>
+        </div>
+        <div class="tbborder">
+            <table id="mytable" >
+        </table>
+            <label id="tblabel" style="color: #8b0000">没有检索到数据</label>
+        </div>
+       <div class="footnav">
+               <label id="btn0"></label>
+               <input id="pageSize" type="text" size="1" maxlength="2" />行 <a href="#" id="pageSizeSet">设置</a>
+               <a href="#" id="btn1">首页</a>
+               <a href="#" id="btn2">上一页</a>
+               <a href="#" id="btn3">下一页</a>
+               <a href="#" id="btn4">尾页</a>
+               <label>转到 </label>
+               <input id="changePage" type="text" size="1" maxlength="4" />
+               <label>页 </label>
+               <a href="#" id="btn5">跳转</a>
+               <label id="phnum" style="float: right;margin-right: 20px">0</label>
+               <label style="float: right" >贫困户数：</label>
+           </div>
+</div>
+
+
+
+<script type="text/javascript">
+    initable("mytable");
+    initdata();
+    var left = ($(window).width() - $("#win_pinfo").width()) / 2;
+    $("#win_pinfo").css({ marginLeft: left });
+     
+
+    function initdata() {
+        $.post("GetData.ashx", { 'method': "getc",'cons':JSON.stringify(getselect())}, function (data) {
+            var arr = eval(data);
+            for (var i = 0; i < arr.length; i++) {
+                $("#select_pc").append("<option>" + arr[i].PkcName + "</option>");
+            }
+            
+            $.post("GetData.ashx", { method: "gety" }, function (data) {
+            var arr = eval(data);
+            for (var i = 0; i < arr.length; i++) {
+                $("#select_py").append("<option>" + arr[i] + "</option>");
+            }
+            postdata();
+        });
+        });
+    }
+
+    $("#select_pc").change(function () {
+        $("#mytable").empty();
+        retable();
+        postdata();
+    });
+
+    $("#select_py").change(function () {
+        $("#mytable").empty();
+        retable();
+        postdata();
+    });
+
+    function postdata() {
+        $.post("GetData.ashx", { method: "geth", 'cons': JSON.stringify(getselect()) }, function (data) {
+            var arr = eval(data);
+            for (var i = 0; i < arr.length; i++) {
+                addcell(arr[i].PkrName,arr[i], getHouseInfo);
+            }
+            $("#phnum").text(arr.length);
+            if (arr.length == 0)
+                $("#tblabel").show();
+            else $("#tblabel").hide();
+        });
+    }
+
+
+    function getselect() {
+        var arr = new Array();
+        arr[0] = $("#select_pc option:selected").val();
+        arr[1] = "";
+        arr[2] = $("#select_py option:selected").val();
+        return arr;
+    }
+
+    function getHouseInfo(data) {
+        $.post("GetData2.ashx",{'method':'hzinfo','hzid':data.HZID},function (hzinfo) {
+            var hzs=eval(hzinfo);
+            var py="";
+            for (var i=0;i<hzs.length;i++)
+            {
+                py=py+hzs[i].PkrName+hzs[i].Age+"岁"+",";
+            }
+            var info="户主"+data.PkrName+",家庭成员"+py+"此户共"+hzs.length+"人，"+data.TpYear+"脱贫，"+data.YtpYear+"已脱贫,脱贫原因："+data.TpReason+",包保人信息:"+data.BbrInfo;
+
+            $("#info_ph").text(info);
+            $("#p_info").show(500);
+            var arr=new Array();
+            arr.push(data.PhotovoltaicIncome);
+            arr.push(data.CultureIncome);
+            arr.push(data.BasicIncome);
+            arr.push(data.subsidyIncome);
+            draw(arr);
+        });
+
+    }
+
+    </script>
+    <script type="text/javascript" src="JS/page.js" charset="gbk"></script>
+    <script type="text/javascript" src="JS/cchart.js"></script>
+</body>
+</html>
